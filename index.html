@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<!-- Documento em português do Brasil (afeta leitores de tela e o corretor do navegador) -->
+<html lang="pt-BR">
+<head>
+<!-- Charset UTF-8: garante que acentos e caracteres especiais (ç, ã, é...) apareçam corretamente -->
+<meta charset="UTF-8">
+<!-- Viewport: faz o site se adaptar à largura da tela do dispositivo (essencial para celular) -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!--
+  Content-Security-Policy (CSP): trava de onde a página pode carregar recursos.
+  - default-src 'self': por padrão, só aceita recursos do próprio site
+  - style-src: permite estilos inline (usados neste arquivo) e o CSS do Google Fonts
+  - font-src: permite baixar os arquivos de fonte do Google
+  - img-src: permite imagens do próprio site e imagens em base64 (data:)
+  - script-src: permite o script inline deste arquivo
+  - object-src 'none': bloqueia plugins antigos (Flash, Java applets etc.)
+  - frame-ancestors 'none': impede que este site seja colocado dentro de um <iframe> de outro site (clickjacking)
+  - upgrade-insecure-requests: força qualquer link http:// esquecido a virar https://
+-->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; script-src 'self' 'unsafe-inline'; connect-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;">
+<!-- Referrer-Policy: quando alguém clica num link daqui para outro site, evita vazar a URL completa de origem -->
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<!-- Permite que buscadores (Google etc.) indexem e sigam os links da página -->
+<meta name="robots" content="index, follow">
+<!-- Descrição usada por buscadores e ao compartilhar o link em redes sociais -->
+<meta name="description" content="Portfólio de Caio Marcos do Amaral Rangel — Desenvolvedor Backend & Automação.">
+<!-- Diz ao navegador que o site é de tema escuro (ajusta scrollbar, inputs nativos etc.) -->
+<meta name="color-scheme" content="dark">
+<!-- Cor da barra do navegador em celulares (Android/Chrome) -->
+<meta name="theme-color" content="#050810">
+
+<title>Caio Rangel — Desenvolvedor Backend &amp; Automação</title>
+
+<!-- preconnect: avisa o navegador com antecedência que vamos falar com esses domínios do Google Fonts, acelerando o carregamento -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Importa as 3 fontes usadas no site: Space Grotesk (títulos), Inter (texto) e JetBrains Mono (trechos "de código") -->
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  /* ======================================================
+     VARIÁVEIS GLOBAIS (design tokens)
+     Definidas uma vez aqui e reutilizadas em todo o CSS
+     como var(--nome). Trocar uma cor aqui muda o site inteiro.
+     ====================================================== */
+  :root{
+    --bg-void: #050810;                        /* fundo mais escuro da página (o "vácuo do espaço") */
+    --bg-panel: #0c1224;                       /* fundo dos cards/painéis, um pouco mais claro */
+    --bg-panel-2: #10182e;                     /* segunda cor usada em gradientes de card */
+    --text-primary: #eef1f8;                   /* cor do texto principal (quase branco) */
+    --text-muted: #8b93ad;                     /* cor do texto secundário/apagado */
+    --accent: #6ee7d0;                         /* verde-menta: cor de destaque principal do site */
+    --accent-dim: rgba(110, 231, 208, 0.18);   /* mesma cor de destaque, só que translúcida (usada em brilhos) */
+    --amber: #f5b26b;                          /* laranja/âmbar: cor de destaque secundária */
+    --line: rgba(255,255,255,0.08);            /* cor usada em bordas sutis */
+    --font-display: 'Space Grotesk', sans-serif;  /* fonte dos títulos */
+    --font-body: 'Inter', sans-serif;              /* fonte do texto corrido */
+    --font-mono: 'JetBrains Mono', monospace;      /* fonte estilo "terminal", usada em detalhes técnicos */
+  }
+
+  /* Reset básico: remove margem/padding padrão do navegador e faz
+     padding/border entrarem na largura total do elemento (box-sizing) */
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  /* Faz a página rolar suavemente ao clicar em links âncora (#secao) em vez de "pular" */
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background: var(--bg-void);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    line-height: 1.6;          /* espaçamento entre linhas, melhora legibilidade */
+    overflow-x: hidden;        /* impede rolagem horizontal indesejada */
+  }
+
+  /* ======================================================
+     FUNDO ANIMADO (canvas de estrelas)
+     O <canvas id="starfield"> é desenhado via JavaScript.
+     Aqui só definimos como ele se posiciona na tela.
+     ====================================================== */
+  #starfield{
+    position: fixed;      /* fica fixo na tela mesmo rolando a página */
+    top:0; left:0;
+    width:100%; height:100%;
+    z-index:0;             /* fica atrás de todo o conteúdo */
+    pointer-events:none;   /* clique "atravessa" o canvas, não bloqueia botões */
+  }
+
+  /* ======================================================
+     ESTAÇÃO ESPACIAL (imagem própria, fornecida por você)
+     ====================================================== */
+  .space-station{
+    position: fixed;
+    top: 7%;
+    right: -70px;          /* metade "sai" da tela, dando efeito de canto */
+    width: 260px;
+    z-index: 0;
+    opacity: 0.55;         /* translúcida, para não competir com o conteúdo */
+    pointer-events: none;
+    filter: drop-shadow(0 0 18px rgba(110,231,208,0.25)); /* brilho suave ao redor */
+    animation: float 9s ease-in-out infinite; /* flutua devagar para cima e para baixo */
+  }
+  /* A imagem preenche a largura do container e mantém a proporção original */
+  .space-station img{
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  /* Em telas médias, a estação fica menor e mais discreta */
+  @media (max-width: 880px){
+    .space-station{ width: 170px; top: 5%; right: -50px; opacity: 0.4; }
+  }
+  /* Em celulares, a estação some para não atrapalhar o conteúdo */
+  @media (max-width: 560px){
+    .space-station{ display: none; }
+  }
+
+  /* Container central que limita a largura do conteúdo e centraliza na página */
+  .wrap{
+    position: relative;
+    z-index: 1;          /* fica acima do canvas e da estação (z-index 0) */
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  /* ======================================================
+     MENU DE NAVEGAÇÃO (topo fixo)
+     ====================================================== */
+  nav{
+    position: fixed;               /* menu sempre visível, mesmo rolando */
+    top:0; left:0; right:0;
+    z-index: 50;                   /* fica acima de tudo */
+    backdrop-filter: blur(10px);   /* desfoca o que passa atrás do menu (efeito vidro fosco) */
+    background: rgba(5,8,16,0.55); /* fundo escuro semitransparente */
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner{
+    max-width: 920px;
+    margin:0 auto;
+    padding: 16px 28px;
+    display:flex;
+    justify-content: space-between; /* logo de um lado, links do outro */
+    align-items:center;
+  }
+  .nav-logo{
+    font-family: var(--font-mono);  /* estilo "código" para o nome/logo */
+    font-size: 14px;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+  }
+  .nav-links{
+    display:flex;
+    gap: 28px;           /* espaço entre os itens do menu */
+    list-style:none;      /* remove as bolinhas de lista */
+  }
+  .nav-links a{
+    color: var(--text-muted);
+    text-decoration:none;
+    font-size: 14px;
+    font-weight:500;
+    position:relative;    /* necessário para o sublinhado animado (::after) se posicionar */
+    padding-bottom: 4px;
+    transition: color .25s ease;
+  }
+  /* Sublinhado animado: começa com largura 0 e cresce até 100% no hover */
+  .nav-links a::after{
+    content:'';
+    position:absolute;
+    left:0; bottom:0;
+    width:0%;
+    height:1.5px;
+    background: var(--accent);
+    transition: width .3s ease;
+  }
+  .nav-links a:hover{ color: var(--text-primary); }
+  .nav-links a:hover::after{ width:100%; }
+
+  /* Em telas pequenas, esconde os links de texto do menu (fica só o botão de idioma) */
+  @media (max-width: 640px){
+    .nav-links{ display:none; }
+  }
+
+  /* Botão de troca de idioma PT/EN, estilo "pílula" com duas opções */
+  .lang-toggle{
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--text-muted);
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 999px;   /* valor bem alto = cantos totalmente arredondados (formato de pílula) */
+    padding: 7px 6px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    transition: border-color .25s ease;
+  }
+  .lang-toggle:hover{ border-color: var(--accent); }
+  .lang-toggle span{
+    padding: 4px 10px;
+    border-radius: 999px;
+    transition: background .25s ease, color .25s ease;
+  }
+  /* A opção de idioma ativa (PT ou EN) fica destacada com fundo colorido */
+  .lang-toggle span.active{
+    background: var(--accent);
+    color: #06120f;
+  }
+
+  /* ======================================================
+     HERO (primeira tela, com nome, cargo e chamada para ação)
+     ====================================================== */
+  .hero{
+    min-height: 100vh;        /* ocupa a altura inteira da tela ao carregar */
+    display:flex;
+    flex-direction:column;
+    justify-content:center;   /* centraliza o conteúdo verticalmente */
+    padding-top: 80px;        /* espaço para não ficar embaixo do menu fixo */
+  }
+  /* Grade com duas colunas: texto de um lado, avatar do outro */
+  .hero-grid{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 48px;
+    flex-wrap: wrap-reverse; /* em telas estreitas, empilha e coloca a imagem por cima do texto */
+  }
+  .hero-text{
+    flex: 1 1 380px;   /* cresce/encolhe, mas tenta manter pelo menos 380px */
+    min-width: 280px;
+  }
+  .hero-visual{
+    display:flex;
+    justify-content:center;
+    flex: 0 0 auto;    /* não cresce nem encolhe, mantém o tamanho do conteúdo (avatar) */
+  }
+
+  /* Container que flutua suavemente para cima e para baixo (efeito "levitando") */
+  .avatar-wrap{
+    animation: float 4.5s ease-in-out infinite;
+  }
+  @keyframes float{
+    0%, 100%{ transform: translateY(0); }     /* posição normal */
+    50%{ transform: translateY(-14px); }      /* sobe 14px no meio da animação */
+  }
+
+  /* Anel externo do avatar: um círculo com gradiente cônico (colorido) que gira sem parar */
+  .avatar-ring{
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;                        /* deixa o elemento perfeitamente redondo */
+    padding: 5px;                               /* essa "grossura" é o que forma o anel visível */
+    background: conic-gradient(from 0deg, var(--accent), var(--amber), var(--accent));
+    animation: rotate-ring 8s linear infinite;  /* gira 360° a cada 8 segundos, sem pausas (linear) */
+  }
+  @keyframes rotate-ring{
+    to{ transform: rotate(360deg); }
+  }
+  /* Círculo interno (fundo sólido) que "tapa" o meio do anel, sobrando só a borda colorida */
+  .avatar-inner{
+    width:100%;
+    height:100%;
+    border-radius: 50%;
+    background: var(--bg-panel);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;    /* garante que a foto (quando adicionada) não vaze do círculo */
+  }
+  /* Texto "CR" mostrado enquanto não há foto de perfil */
+  .avatar-placeholder{
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 3.4rem;
+    color: var(--accent);
+  }
+  /* Caso uma <img> seja colocada dentro do avatar, ela preenche o círculo sem distorcer */
+  .avatar-inner img{
+    width:100%;
+    height:100%;
+    object-fit: cover;
+  }
+
+  /* Linha estilo "terminal" digitada via JavaScript (ex: "$ automatizando processos...") */
+  .hero-eyebrow{
+    font-family: var(--font-mono);
+    color: var(--accent);
+    font-size: 15px;
+    margin-bottom: 18px;
+    min-height: 22px;   /* evita a página "pular" enquanto o texto ainda está sendo digitado */
+  }
+  /* Cursor piscante ao lado do texto digitado, imitando um terminal de verdade */
+  .hero-eyebrow .cursor{
+    display:inline-block;
+    width: 8px;
+    background: var(--accent);
+    margin-left: 2px;
+    animation: blink 1s steps(1) infinite; /* alterna visível/invisível a cada 0.5s */
+  }
+  @keyframes blink{ 50%{ opacity:0; } }
+
+  h1.hero-name{
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2.6rem, 7vw, 4.6rem); /* tamanho responsivo: nunca menor que 2.6rem nem maior que 4.6rem */
+    line-height: 1.05;
+    letter-spacing: -0.01em;  /* aproxima levemente as letras, dando aspecto mais "compacto" ao título */
+    margin-bottom: 18px;
+  }
+
+  .hero-role{
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(1.1rem, 2.4vw, 1.5rem);
+    color: var(--text-muted);
+    margin-bottom: 26px;
+  }
+
+  .hero-pitch{
+    max-width: 560px;   /* limita a largura do parágrafo para facilitar a leitura */
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    margin-bottom: 40px;
+  }
+
+  .cta-row{
+    display:flex;
+    gap: 16px;
+    flex-wrap: wrap;   /* em telas estreitas, os botões quebram para a linha de baixo */
+  }
+
+  /* ======================================================
+     BOTÕES (usados no site inteiro: nav, hero, contato...)
+     ====================================================== */
+  .btn{
+    position: relative;      /* base para os pseudo-elementos ::before e ::after abaixo */
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 15px;
+    padding: 14px 26px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 1px solid var(--line);
+    background: var(--bg-panel);
+    color: var(--text-primary);
+    text-decoration: none;
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    overflow: hidden;        /* esconde o brilho/ripple que passar da borda do botão */
+    isolation: isolate;      /* cria um novo contexto de empilhamento, evitando conflito de z-index */
+    transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+  }
+  /* Brilho radial que segue o mouse dentro do botão (posição definida via JS em --mx/--my) */
+  .btn::before{
+    content:'';
+    position:absolute;
+    inset:0;                 /* ocupa 100% do botão (top/right/bottom/left = 0) */
+    z-index:-1;               /* fica atrás do texto do botão */
+    background: radial-gradient(160px circle at var(--mx,50%) var(--my,50%), var(--accent-dim), transparent 70%);
+    opacity:0;                /* só aparece no hover */
+    transition: opacity .3s ease;
+  }
+  .btn:hover{
+    transform: translateY(-2px);         /* sobe levemente ao passar o mouse */
+    border-color: var(--accent);
+    box-shadow: 0 8px 24px -8px rgba(110,231,208,0.35);
+  }
+  .btn:hover::before{ opacity:1; }
+  .btn:active{ transform: translateY(0px) scale(0.98); } /* efeito de "afundar" ao clicar */
+
+  /* Faixa de brilho ("shine") que desliza pelo botão da esquerda pra direita no hover */
+  .btn::after{
+    content:'';
+    position:absolute;
+    top:0; left:-75%;    /* começa fora da view, à esquerda do botão */
+    width:45%; height:100%;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.28), transparent);
+    transform: skewX(-20deg);   /* inclina a faixa, dando efeito de "reflexo de luz" */
+    transition: left .6s ease;
+    pointer-events:none;
+  }
+  .btn:hover::after{ left:130%; }  /* desliza até sair do lado direito do botão */
+
+  /* Pulsação (glow que cresce e desaparece) usada nos botões principais */
+  @keyframes btn-pulse{
+    0%, 100%{ box-shadow: 0 0 0 0 rgba(110,231,208,0.45); }  /* anel de luz "nasce" colado no botão */
+    50%{ box-shadow: 0 0 0 9px rgba(110,231,208,0); }         /* anel de luz cresce e desaparece (fica transparente) */
+  }
+
+  /* Botão "primário" (destaque em verde-menta, com pulsação contínua) */
+  .btn.primary{
+    background: var(--accent);
+    color: #06120f;          /* texto escuro para contrastar com o fundo claro do botão */
+    border-color: var(--accent);
+    animation: btn-pulse 2.6s ease-in-out infinite;
+  }
+  .btn.primary:hover{
+    box-shadow: 0 10px 30px -8px rgba(110,231,208,0.55);
+    animation-play-state: paused;  /* pausa a pulsação enquanto o mouse está em cima */
+  }
+
+  /* Círculo de "onda" (ripple) criado via JS a cada clique, imitando o efeito Material Design */
+  .ripple{
+    position:absolute;
+    border-radius:50%;
+    background: rgba(255,255,255,0.5);
+    transform: scale(0);               /* começa "invisível" (tamanho zero) */
+    animation: ripple-anim .6s ease-out;  /* cresce e desaparece em 0.6s */
+    pointer-events:none;
+  }
+  @keyframes ripple-anim{
+    to{ transform: scale(3); opacity:0; }  /* termina 3x maior e totalmente transparente */
+  }
+
+  /* ======================================================
+     SEÇÕES (estrutura repetida: Sobre, Habilidades, etc.)
+     ====================================================== */
+  section{
+    padding: 110px 0 30px;   /* espaço grande no topo, para não ficar colado no menu/seção anterior */
+  }
+  /* Pequena etiqueta tipo "// sobre", estilo comentário de código */
+  .section-label{
+    font-family: var(--font-mono);
+    color: var(--accent);
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+  h2.section-title{
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(1.7rem, 4vw, 2.3rem);
+    margin-bottom: 36px;
+  }
+
+  /* Classe usada para o efeito de "aparecer ao rolar a página" (fade + subida leve) */
+  .reveal{
+    opacity: 0;                                  /* começa invisível */
+    transform: translateY(18px);                  /* começa 18px abaixo da posição final */
+    transition: opacity .7s ease, transform .7s ease;
+  }
+  /* Quando o JS detecta que o elemento entrou na tela, adiciona esta classe */
+  .reveal.visible{
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* SOBRE */
+  .about-text{
+    max-width: 640px;
+    color: var(--text-muted);
+    font-size: 1.05rem;
+  }
+  .about-text strong{ color: var(--text-primary); font-weight: 600; } /* destaca palavras-chave dentro do texto */
+
+  /* HABILIDADES */
+  .skills-grid{
+    display:flex;
+    flex-wrap:wrap;   /* as "pílulas" de habilidade quebram linha automaticamente */
+    gap: 12px;
+  }
+  .skill-chip{
+    font-family: var(--font-mono);   /* fonte "de código", combina com o tema técnico */
+    font-size: 13.5px;
+    padding: 10px 16px;
+    border: 1px solid var(--line);
+    border-radius: 999px;             /* formato de pílula */
+    background: var(--bg-panel);
+    color: var(--text-primary);
+    transition: border-color .25s ease, transform .25s ease, box-shadow .25s ease;
+  }
+  .skill-chip:hover{
+    border-color: var(--accent);
+    transform: translateY(-3px);     /* efeito de "levantar" a pílula no hover */
+    box-shadow: 0 6px 18px -6px rgba(110,231,208,0.4);
+    color: var(--accent);
+  }
+
+  /* EXPERIÊNCIA (linha do tempo vertical) */
+  .timeline{
+    position:relative;
+    padding-left: 28px;
+    border-left: 1px solid var(--line);   /* a "linha" vertical da timeline */
+  }
+  .timeline-item{
+    position:relative;
+    margin-bottom: 40px;
+  }
+  .timeline-item:last-child{ margin-bottom:0; }  /* remove espaço extra do último item */
+  /* Bolinha colorida que marca cada item na linha do tempo */
+  .timeline-item::before{
+    content:'';
+    position:absolute;
+    left: -33px;      /* posiciona a bolinha em cima da linha vertical */
+    top: 4px;
+    width: 9px;
+    height: 9px;
+    border-radius:50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 4px rgba(110,231,208,0.15); /* auréola sutil ao redor da bolinha */
+  }
+  .timeline-period{
+    font-family: var(--font-mono);
+    color: var(--accent);
+    font-size: 12.5px;
+    margin-bottom: 6px;
+  }
+  .timeline-role{
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+  }
+  .timeline-org{
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+  }
+  .timeline-desc{
+    color: var(--text-muted);
+    font-size: 0.97rem;
+    max-width: 560px;
+  }
+
+  /* CURRÍCULO (card de download/visualização do PDF) */
+  .resume-card{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 24px;
+    flex-wrap: wrap;    /* em telas estreitas, os botões descem para uma nova linha */
+    background: linear-gradient(160deg, var(--bg-panel), var(--bg-panel-2));
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 32px 36px;
+    transition: border-color .3s ease, box-shadow .3s ease;
+  }
+  .resume-card:hover{
+    border-color: var(--accent);
+    box-shadow: 0 12px 30px -12px rgba(110,231,208,0.3);
+  }
+  .resume-icon{
+    width: 52px;
+    height: 52px;
+    flex-shrink: 0;    /* impede que o ícone encolha se faltar espaço */
+    border-radius: 10px;
+    background: var(--accent-dim);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size: 24px;
+  }
+  .resume-info{
+    flex: 1;
+    min-width: 220px;
+    display:flex;
+    align-items:center;
+    gap: 18px;
+  }
+  .resume-text-title{
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+  }
+  .resume-text-sub{
+    color: var(--text-muted);
+    font-size: 0.92rem;
+  }
+  .resume-actions{
+    display:flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  /* PROJETOS */
+  .projects-grid{
+    display:grid;
+    /* cria colunas automáticas de no mínimo 260px; quantas couberem na tela */
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+  }
+  .project-card{
+    background: linear-gradient(160deg, var(--bg-panel), var(--bg-panel-2));
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px;
+    overflow: hidden;    /* garante que a imagem de prévia não vaze dos cantos arredondados */
+    transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+  }
+  /* Miniatura/screenshot do projeto, no topo do card (largura total, cantos "colados" na borda do card) */
+  .project-thumb{
+    display:block;
+    width: calc(100% + 48px);   /* compensa o padding do .project-card (24px de cada lado) */
+    margin: -24px -24px 16px -24px;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;          /* preenche o espaço sem distorcer a imagem */
+    border-bottom: 1px solid var(--line);
+  }
+  .project-card:hover{
+    transform: translateY(-4px);   /* card "levanta" no hover */
+    border-color: var(--accent);
+    box-shadow: 0 12px 30px -10px rgba(110,231,208,0.3);
+  }
+  .project-title{
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+  }
+  .project-desc{
+    color: var(--text-muted);
+    font-size: 0.93rem;
+    margin-bottom: 14px;
+  }
+  .project-tags{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .project-tag{
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--amber);
+    background: rgba(245,178,107,0.1);
+    padding: 4px 9px;
+    border-radius: 5px;
+  }
+
+  /* CONTATO */
+  .contact-box{
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 48px;
+    text-align:center;
+  }
+  .contact-title{
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    margin-bottom: 14px;
+  }
+  .contact-sub{
+    color: var(--text-muted);
+    margin-bottom: 32px;
+    max-width: 480px;
+    margin-left:auto; margin-right:auto;   /* centraliza o parágrafo dentro do card */
+  }
+  .contact-buttons{
+    display:flex;
+    justify-content:center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  footer{
+    text-align:center;
+    padding: 40px 0 60px;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-family: var(--font-mono);
+  }
+
+  /* Respeita quem configurou "reduzir movimento" no sistema operacional:
+     desliga (quase) todas as animações e transições do site */
+  @media (prefers-reduced-motion: reduce){
+    *{ animation: none !important; transition: none !important; }
+    html{ scroll-behavior:auto; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Canvas onde o JavaScript desenha as estrelas e estrelas cadentes do fundo -->
+<canvas id="starfield"></canvas>
+
+<!--
+  Estação espacial: troque "estacao-espacial.png" pelo nome real do arquivo
+  de imagem que você for adicionar na mesma pasta do index.html.
+  Formatos aceitos: .png (recomendado, se a imagem tiver fundo transparente),
+  .webp ou .jpg. O CSS abaixo (.space-station) já cuida do tamanho, posição,
+  brilho e da flutuação suave da imagem.
+-->
+<div class="space-station" aria-hidden="true">
+  <img src="estacao-espacial.png" alt="">
+</div>
+
+<!-- ======================================================
+     MENU DE NAVEGAÇÃO
+     ====================================================== -->
+<nav>
+  <div class="nav-inner">
+    <span class="nav-logo">caio.rangel()</span>
+
+    <!--
+      Cada link tem data-pt e data-en: são os textos em português e inglês.
+      O JavaScript lê esses atributos para trocar o conteúdo quando o botão
+      de idioma é clicado, sem precisar recarregar a página.
+    -->
+    <ul class="nav-links">
+      <li><a href="#sobre" data-pt="Sobre" data-en="About">Sobre</a></li>
+      <li><a href="#habilidades" data-pt="Habilidades" data-en="Skills">Habilidades</a></li>
+      <li><a href="#formacao" data-pt="Formação" data-en="Education">Formação</a></li>
+      <li><a href="#curriculo" data-pt="Currículo" data-en="Resume">Currículo</a></li>
+      <li><a href="#projetos" data-pt="Projetos" data-en="Projects">Projetos</a></li>
+      <li><a href="#contato" data-pt="Contato" data-en="Contact">Contato</a></li>
+    </ul>
+
+    <!-- Botão de idioma: ao clicar, o JS alterna entre "pt" e "en" (função applyLang) -->
+    <button class="lang-toggle" id="langToggle" aria-label="Trocar idioma / Switch language">
+      <span class="active" data-lang="pt">PT</span><span data-lang="en">EN</span>
+    </button>
+  </div>
+</nav>
+
+<!-- Container principal: tudo que é conteúdo "de verdade" da página fica aqui dentro -->
+<main class="wrap">
+
+  <!-- ======================================================
+       HERO — primeira tela: nome, cargo, foto e botões de ação
+       ====================================================== -->
+  <section class="hero">
+    <div class="hero-grid">
+      <div class="hero-text">
+        <!-- Linha "de terminal" digitada aos poucos pelo JS (função typeLine) -->
+        <div class="hero-eyebrow"><span id="typed"></span><span class="cursor">&nbsp;</span></div>
+
+        <h1 class="hero-name">Caio Marcos<br>do Amaral Rangel</h1>
+
+        <p class="hero-role" data-pt="Desenvolvedor Backend &amp; Automação" data-en="Backend Developer &amp; Automation">Desenvolvedor Backend &amp; Automação</p>
+
+        <p class="hero-pitch" data-pt="Construo sistemas no back-end e automatizo processos que antes tomavam horas de trabalho manual — do banco de dados à integração entre sistemas." data-en="I build back-end systems and automate processes that used to take hours of manual work — from databases to system integration.">
+          Construo sistemas no back-end e automatizo processos que antes tomavam
+          horas de trabalho manual — do banco de dados à integração entre sistemas.
+        </p>
+
+        <div class="cta-row">
+          <!-- Botão "primary" leva até a seção de contato -->
+          <a href="#contato" class="btn primary" data-pt="Falar comigo" data-en="Get in touch">Falar comigo</a>
+          <a href="#projetos" class="btn" data-pt="Ver projetos" data-en="View projects">Ver projetos</a>
+        </div>
+      </div>
+
+      <!-- Avatar circular com anel animado -->
+      <div class="hero-visual">
+        <div class="avatar-wrap">
+          <div class="avatar-ring">
+            <div class="avatar-inner">
+              <!--
+                PLACEHOLDER: quando você tiver uma foto sua, envie aqui no chat
+                e troque a linha abaixo por, por exemplo:
+                <img src="foto-caio.jpg" alt="Caio Marcos do Amaral Rangel">
+              -->
+              <span class="avatar-placeholder">CR</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================
+       SOBRE
+       ====================================================== -->
+  <section id="sobre">
+    <div class="section-label" data-pt="// sobre" data-en="// about">// sobre</div>
+    <h2 class="section-title reveal" data-pt="Quem é Caio" data-en="About Caio">Quem é Caio</h2>
+
+    <!--
+      Este parágrafo usa data-pt-html/data-en-html (em vez de data-pt/data-en)
+      porque o texto contém tags HTML dentro dele (<strong>, <br>, <em>).
+      O JS troca o innerHTML inteiro nesse caso, e não só o texto simples.
+    -->
+    <p class="about-text reveal" id="aboutText"
+      data-pt-html='Sou <strong>desenvolvedor back-end</strong> com foco em <strong>automação de processos</strong>, atuando na construção de APIs, integrações entre sistemas e scripts que eliminam tarefas repetitivas. Gosto de resolver problemas na raiz: entender o processo manual, mapear onde ele trava e transformar isso em algo confiável e automático.<br><br><em style="color:var(--text-muted); font-style:normal; opacity:0.85;">(Espaço reservado — me conte mais sobre sua trajetória, formação e o que te motiva como desenvolvedor, e eu ajusto esse texto.)</em>'
+      data-en-html='I am a <strong>back-end developer</strong> focused on <strong>process automation</strong>, building APIs, system integrations and scripts that eliminate repetitive tasks. I like solving problems at the root: understanding the manual process, finding where it breaks down, and turning it into something reliable and automatic.<br><br><em style="color:var(--text-muted); font-style:normal; opacity:0.85;">(Placeholder — tell me more about your background, education and what motivates you as a developer, and I will adjust this text.)</em>'>
+      Sou <strong>desenvolvedor back-end</strong> com foco em <strong>automação de processos</strong>,
+      atuando na construção de APIs, integrações entre sistemas e scripts que eliminam
+      tarefas repetitivas. Gosto de resolver problemas na raiz: entender o processo manual,
+      mapear onde ele trava e transformar isso em algo confiável e automático.
+      <br><br>
+      <em style="color:var(--text-muted); font-style:normal; opacity:0.85;">
+      (Espaço reservado — me conte mais sobre sua trajetória, formação e o que te motiva
+      como desenvolvedor, e eu ajusto esse texto.)
+      </em>
+    </p>
+  </section>
+
+  <!-- ======================================================
+       CURRÍCULO EM PDF
+       ====================================================== -->
+  <section id="curriculo">
+    <div class="section-label" data-pt="// currículo" data-en="// resume">// currículo</div>
+    <h2 class="section-title reveal" data-pt="Currículo em PDF" data-en="Resume (PDF)">Currículo em PDF</h2>
+    <div class="resume-card reveal">
+      <div class="resume-info">
+        <div class="resume-icon">📄</div>
+        <div>
+          <div class="resume-text-title" data-pt="Currículo — Caio Rangel" data-en="Resume — Caio Rangel">Currículo — Caio Rangel</div>
+          <div class="resume-text-sub" data-pt="Baixe ou visualize meu currículo completo em PDF" data-en="Download or view my full resume in PDF">Baixe ou visualize meu currículo completo em PDF</div>
+        </div>
+      </div>
+      <div class="resume-actions">
+        <!-- O atributo "download" sugere ao navegador baixar o arquivo em vez de tentar abri-lo -->
+        <a href="curriculo-caio-rangel.pdf" download class="btn primary" data-pt="⬇ Baixar PDF" data-en="⬇ Download PDF">⬇ Baixar PDF</a>
+        <!-- target="_blank" abre em nova aba; rel="noopener noreferrer" é uma proteção de segurança
+             que impede a página aberta de manipular esta aba original -->
+        <a href="curriculo-caio-rangel.pdf" target="_blank" rel="noopener noreferrer" class="btn" data-pt="Visualizar" data-en="View">Visualizar</a>
+      </div>
+    </div>
+    <p style="margin-top:16px; color:var(--text-muted); font-size:0.85rem; font-family: var(--font-mono);"
+      data-pt="* coloque o arquivo 'curriculo-caio-rangel.pdf' na mesma pasta do index.html para os botões funcionarem"
+      data-en="* place the file 'curriculo-caio-rangel.pdf' in the same folder as index.html for the buttons to work">
+      * coloque o arquivo 'curriculo-caio-rangel.pdf' na mesma pasta do index.html para os botões funcionarem
+    </p>
+  </section>
+
+  <!-- ======================================================
+       HABILIDADES (lista de "pílulas" com o stack técnico)
+       ====================================================== -->
+  <section id="habilidades">
+    <div class="section-label" data-pt="// habilidades" data-en="// skills">// habilidades</div>
+    <h2 class="section-title reveal" data-pt="Stack &amp; Competências" data-en="Stack &amp; Skills">Stack &amp; Competências</h2>
+    <div class="skills-grid reveal">
+      <!-- Nomes de tecnologias (Python, Docker etc.) não são traduzidos, por isso não têm data-pt/data-en -->
+      <span class="skill-chip">Python</span>
+      <span class="skill-chip">Node.js</span>
+      <span class="skill-chip">SQL / PostgreSQL</span>
+      <span class="skill-chip" data-pt="APIs REST" data-en="REST APIs">APIs REST</span>
+      <span class="skill-chip" data-pt="Automação de Processos (RPA)" data-en="Process Automation (RPA)">Automação de Processos (RPA)</span>
+      <span class="skill-chip">Docker</span>
+      <span class="skill-chip">Linux</span>
+      <span class="skill-chip">Git &amp; GitHub</span>
+      <span class="skill-chip" data-pt="Integração de Sistemas" data-en="System Integration">Integração de Sistemas</span>
+      <span class="skill-chip" data-pt="Testes Automatizados" data-en="Automated Testing">Testes Automatizados</span>
+    </div>
+    <p style="margin-top:16px; color:var(--text-muted); font-size:0.85rem; font-family: var(--font-mono);"
+      data-pt="* lista de exemplo — me diga suas competências reais para eu substituir"
+      data-en="* example list — tell me your real skills so I can replace it">
+      * lista de exemplo — me diga suas competências reais para eu substituir
+    </p>
+  </section>
+
+  <!-- ======================================================
+       FORMAÇÃO ACADÊMICA (linha do tempo)
+       ====================================================== -->
+  <section id="formacao">
+    <div class="section-label" data-pt="// formação" data-en="// education">// formação</div>
+    <h2 class="section-title reveal" data-pt="Formação Acadêmica" data-en="Education">Formação Acadêmica</h2>
+    <div class="timeline reveal">
+      <!-- Cada .timeline-item é um curso/período. A bolinha na linha vertical é feita em CSS (::before) -->
+      <div class="timeline-item">
+        <div class="timeline-period" data-pt="Em andamento" data-en="In progress">Em andamento</div>
+        <div class="timeline-role" data-pt="Ciência da Computação" data-en="Computer Science">Ciência da Computação</div>
+        <div class="timeline-org">Uninassau</div>
+        <div class="timeline-desc" data-pt="Graduação com foco em desenvolvimento de software, estruturas de dados e lógica de programação." data-en="Degree focused on software development, data structures and programming logic.">
+          Graduação com foco em desenvolvimento de software, estruturas de dados e lógica de programação.
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-period" data-pt="Concluído" data-en="Completed">Concluído</div>
+        <div class="timeline-role" data-pt="Curso Completo de Python" data-en="Complete Python Course">Curso Completo de Python</div>
+        <div class="timeline-org">Udemy</div>
+        <div class="timeline-desc" data-pt="Curso completo de Python, do básico ao avançado, incluindo lógica de programação, estruturas de dados e aplicações práticas." data-en="Complete Python course, from basics to advanced, including programming logic, data structures and practical applications.">
+          Curso completo de Python, do básico ao avançado, incluindo lógica de programação, estruturas de dados e aplicações práticas.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================
+       PROJETOS EM DESTAQUE
+       ====================================================== -->
+  <section id="projetos">
+    <div class="section-label" data-pt="// projetos" data-en="// projects">// projetos</div>
+    <h2 class="section-title reveal" data-pt="Projetos em Destaque" data-en="Featured Projects">Projetos em Destaque</h2>
+    <div class="projects-grid reveal">
+      <!-- Cada .project-card é um projeto. As "project-tag" são as tecnologias usadas nele -->
+      <div class="project-card">
+        <!-- Screenshot real do projeto, enviado por você -->
+        <img src="projeto-pequeno-aprendiz.png" alt="Tela de login do Pequeno Aprendiz" class="project-thumb">
+        <div class="project-title" data-pt="Pequeno Aprendiz — Portal do Aluno" data-en="Pequeno Aprendiz — Student Portal">Pequeno Aprendiz — Portal do Aluno</div>
+        <div class="project-desc" data-pt="Portal de acesso do aluno com login, histórico acadêmico, videoaulas, gestão financeira (boletos) e chat direto com professores e tutores." data-en="Student access portal with login, academic history, video lessons, financial management (invoices) and direct chat with teachers and tutors.">Portal de acesso do aluno com login, histórico acadêmico, videoaulas, gestão financeira (boletos) e chat direto com professores e tutores.</div>
+        <div class="project-tags">
+          <span class="project-tag">HTML</span>
+          <span class="project-tag">CSS</span>
+        </div>
+      </div>
+      <div class="project-card">
+        <div class="project-title" data-pt="Nome do Projeto 2" data-en="Project Name 2">Nome do Projeto 2</div>
+        <div class="project-desc" data-pt="Breve descrição do problema resolvido e do impacto gerado." data-en="Brief description of the problem solved and the impact generated.">Breve descrição do problema resolvido e do impacto gerado.</div>
+        <div class="project-tags">
+          <span class="project-tag">API REST</span>
+          <span class="project-tag">PostgreSQL</span>
+        </div>
+      </div>
+      <div class="project-card">
+        <div class="project-title" data-pt="Nome do Projeto 3" data-en="Project Name 3">Nome do Projeto 3</div>
+        <div class="project-desc" data-pt="Breve descrição do problema resolvido e do impacto gerado." data-en="Brief description of the problem solved and the impact generated.">Breve descrição do problema resolvido e do impacto gerado.</div>
+        <div class="project-tags">
+          <span class="project-tag">Docker</span>
+          <span class="project-tag" data-pt="Integração" data-en="Integration">Integração</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================
+       CONTATO
+       ====================================================== -->
+  <section id="contato">
+    <div class="contact-box reveal">
+      <div class="contact-title" data-pt="Vamos conversar?" data-en="Let's talk?">Vamos conversar?</div>
+      <p class="contact-sub" data-pt="Estou aberto a novas oportunidades em desenvolvimento back-end e automação. Envie um e-mail ou chame no WhatsApp." data-en="I'm open to new opportunities in back-end development and automation. Send an email or message me on WhatsApp.">
+        Estou aberto a novas oportunidades em desenvolvimento back-end e automação.
+        Envie um e-mail ou chame no WhatsApp.
+      </p>
+      <div class="contact-buttons">
+        <!-- mailto: abre o programa de e-mail padrão do visitante, já preenchido com seu endereço -->
+        <a href="mailto:caiomarangel@gmail.com" class="btn primary" data-pt="✉ E-mail" data-en="✉ Email">✉ E-mail</a>
+        <!-- wa.me: link oficial do WhatsApp que abre uma conversa direto com o número informado -->
+        <a href="https://wa.me/5521983206771" target="_blank" rel="noopener noreferrer" class="btn">WhatsApp</a>
+        <a href="https://github.com/CaioArc" target="_blank" rel="noopener noreferrer" class="btn">GitHub</a>
+      </div>
+    </div>
+  </section>
+
+  <footer data-pt="Caio Marcos do Amaral Rangel — feito com café e algumas linhas de código." data-en="Caio Marcos do Amaral Rangel — made with coffee and a few lines of code.">
+    Caio Marcos do Amaral Rangel — feito com café e algumas linhas de código.
+  </footer>
+
+</main>
+
+<script>
+'use strict';
+// 'use strict' ativa o "modo estrito" do JavaScript: erros que normalmente
+// seriam ignorados silenciosamente (como criar uma variável sem declarar)
+// passam a gerar erro de verdade, ajudando a pegar bugs mais cedo.
+
+// Tudo é colocado dentro desta função autoexecutável (IIFE = Immediately
+// Invoked Function Expression). Isso evita que as variáveis/funções daqui
+// "vazem" para o escopo global do navegador e entrem em conflito com
+// outros scripts que você venha a adicionar no futuro.
+(function(){
+
+  // ============================================================
+  // 1) FUNDO ANIMADO — CAMPO DE ESTRELAS
+  // ============================================================
+
+  // Pega a tag <canvas id="starfield"> do HTML
+  const canvas = document.getElementById('starfield');
+  // Se por algum motivo o canvas não existir na página, encerra o script
+  // aqui mesmo, evitando erros nas linhas seguintes.
+  if(!canvas){ return; }
+
+  // "ctx" é o contexto 2D do canvas: o "pincel" usado para desenhar nele
+  const ctx = canvas.getContext('2d');
+
+  let stars = [];   // array que vai guardar todas as estrelas de fundo
+  let w, h;         // largura e altura atuais do canvas
+
+  // Verifica se o visitante pediu ao sistema operacional para reduzir
+  // animações (opção de acessibilidade). Se sim, o site desenha tudo
+  // parado, sem movimento.
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Ajusta o tamanho do canvas para acompanhar o tamanho da janela/página
+  // e recria as estrelas do zero (senão elas ficariam posicionadas erradas)
+  function resize(){
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = document.body.scrollHeight;  // altura da página inteira, não só da tela visível
+    initStars();
+  }
+
+  // Cria o array de estrelas com posição e propriedades aleatórias
+  function initStars(){
+    // Quantidade de estrelas proporcional à área da tela (telas maiores = mais estrelas)
+    const count = Math.floor((w * h) / 9000);
+    stars = Array.from({length: count}, () => ({
+      x: Math.random() * w,                      // posição horizontal aleatória
+      y: Math.random() * h,                       // posição vertical aleatória
+      r: Math.random() * 1.3 + 0.3,                // raio (tamanho) da estrela
+      baseAlpha: Math.random() * 0.6 + 0.3,        // transparência "de base"
+      twinkleSpeed: Math.random() * 0.02 + 0.005,  // velocidade do piscar (twinkle)
+      phase: Math.random() * Math.PI * 2,          // ponto de partida do piscar (evita todas piscarem juntas)
+      driftX: (Math.random() - 0.5) * 0.05,        // velocidade de deslocamento horizontal (bem lenta)
+      driftY: (Math.random() - 0.5) * 0.05         // velocidade de deslocamento vertical (bem lenta)
+    }));
+  }
+
+  // Guarda a posição de rolagem da página, usada para dar um leve efeito
+  // de paralaxe (estrelas se movem um pouco mais devagar que o scroll)
+  let scrollY = 0;
+  window.addEventListener('scroll', () => { scrollY = window.scrollY; });
+
+  // ============================================================
+  // 2) ESTRELAS CADENTES
+  // ============================================================
+
+  let shootingStars = [];      // lista das estrelas cadentes "vivas" no momento
+  let lastShootTime = 0;       // timestamp da última estrela cadente criada
+  // Tempo aleatório (em milissegundos) até a próxima estrela cadente aparecer
+  let nextShootDelay = 600 + Math.random() * 1200;
+
+  // Cria uma nova estrela cadente com posição/ângulo/velocidade aleatórios
+  function spawnShootingStar(){
+    // Nasce em algum ponto da faixa horizontal central e no terço superior da tela
+    const startX = Math.random() * w * 0.6 + w * 0.2;
+    const startY = Math.random() * h * 0.35;
+    // Ângulo de aproximadamente 45°, com uma pequena variação para não ficar repetitivo
+    const angle = (Math.PI / 4) + (Math.random() * 0.3 - 0.15);
+    const speed = 11 + Math.random() * 7;   // velocidade de deslocamento por quadro
+    shootingStars.push({
+      x: startX,
+      y: startY - scrollY * 0.06,           // já aplica o mesmo efeito de paralaxe das estrelas normais
+      vx: Math.cos(angle) * speed,          // velocidade no eixo X (calculada a partir do ângulo)
+      vy: Math.sin(angle) * speed,          // velocidade no eixo Y
+      len: 150 + Math.random() * 90,        // comprimento do rastro
+      width: 2.6 + Math.random() * 1.4,     // espessura do traço
+      life: 1                                // "vida" da estrela: começa em 1 (100%) e vai diminuindo
+    });
+  }
+
+  // Atualiza a posição e desenha cada estrela cadente ativa
+  function drawShootingStars(dt){
+    // Percorre de trás para frente: assim dá para remover itens do array
+    // no meio do loop sem bagunçar os índices dos que ainda faltam visitar
+    for(let i = shootingStars.length - 1; i >= 0; i--){
+      const s = shootingStars[i];
+      s.x += s.vx;         // avança a posição conforme a velocidade
+      s.y += s.vy;
+      s.life -= 0.012;      // vai "morrendo" aos poucos (efeito de desaparecer)
+
+      // Remove a estrela cadente se ela já sumiu ou saiu da tela
+      if(s.life <= 0 || s.x > w + 100 || s.y > h + 100){
+        shootingStars.splice(i, 1);
+        continue;   // pula para a próxima iteração do loop
+      }
+
+      // Calcula o ponto final do rastro (atrás da "cabeça" da estrela)
+      const tailX = s.x - s.vx * (s.len / 12);
+      const tailY = s.y - s.vy * (s.len / 12);
+
+      // Cria um gradiente que vai de branco brilhante (cabeça) até transparente (fim do rastro)
+      const grad = ctx.createLinearGradient(s.x, s.y, tailX, tailY);
+      grad.addColorStop(0, `rgba(255,255,255,${s.life})`);
+      grad.addColorStop(0.4, `rgba(180,235,225,${s.life * 0.6})`);
+      grad.addColorStop(1, 'rgba(110,231,208,0)');
+
+      ctx.save();   // guarda o estado atual do canvas (para não afetar outros desenhos)
+      ctx.shadowColor = 'rgba(180,235,225,0.9)';
+      ctx.shadowBlur = 14;             // desfoque ao redor da linha, criando um brilho (glow)
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = s.width;
+      ctx.lineCap = 'round';           // pontas arredondadas na linha do rastro
+      ctx.beginPath();
+      ctx.moveTo(s.x, s.y);
+      ctx.lineTo(tailX, tailY);
+      ctx.stroke();                    // desenha a linha do rastro
+
+      // Desenha um pontinho branco na "cabeça" da estrela cadente, mais brilhante que o rastro
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.width * 1.5, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,255,255,${s.life})`;
+      ctx.fill();
+      ctx.restore();  // devolve o canvas ao estado salvo antes (desfaz shadowBlur etc.)
+    }
+  }
+
+  // ============================================================
+  // 3) LOOP PRINCIPAL DE DESENHO (estrelas normais)
+  // ============================================================
+
+  // "t" é o tempo (em milissegundos) desde que a página carregou,
+  // fornecido automaticamente pelo requestAnimationFrame
+  function draw(t){
+    ctx.clearRect(0, 0, w, h);   // limpa o canvas inteiro antes de redesenhar (senão as estrelas "arrastariam")
+    for(const s of stars){
+      // Calcula o brilho da estrela neste instante: se reducedMotion estiver
+      // ativo, não pisca (twinkle = 0); senão, usa uma onda seno para oscilar suavemente
+      const twinkle = reducedMotion ? 0 : Math.sin(t * s.twinkleSpeed + s.phase) * 0.35;
+      // Garante que o valor final de transparência fique sempre entre 0 e 1
+      const alpha = Math.max(0, Math.min(1, s.baseAlpha + twinkle));
+
+      ctx.beginPath();
+      const parallaxY = s.y - scrollY * 0.06;   // aplica o deslocamento de paralaxe conforme o scroll
+      ctx.arc(s.x, parallaxY, s.r, 0, Math.PI * 2);  // desenha um círculo (a estrela)
+      ctx.fillStyle = `rgba(230,238,255,${alpha})`;
+      ctx.fill();
+
+      // Move a estrela lentamente e a "teleporta" para o lado oposto
+      // quando ela sai da tela, criando um campo infinito
+      if(!reducedMotion){
+        s.x += s.driftX;
+        s.y += s.driftY;
+        if(s.x < 0) s.x = w;
+        if(s.x > w) s.x = 0;
+        if(s.y < 0) s.y = h;
+        if(s.y > h) s.y = 0;
+      }
+    }
+  }
+
+  // Função chamada a cada quadro de animação: desenha as estrelas normais
+  // e, além disso, decide se é hora de criar uma nova estrela cadente
+  function drawFrame(t){
+    draw(t);
+    if(!reducedMotion){
+      // Se já passou tempo suficiente desde a última estrela cadente, cria outra
+      if(t - lastShootTime > nextShootDelay){
+        spawnShootingStar();
+        lastShootTime = t;
+        nextShootDelay = 700 + Math.random() * 1500;  // sorteia o próximo intervalo
+      }
+      drawShootingStars();
+    }
+    // Agenda a próxima execução deste mesmo loop (a "mágica" da animação)
+    requestAnimationFrame(drawFrame);
+  }
+
+  // Sempre que a janela for redimensionada, recalcula tudo
+  window.addEventListener('resize', resize);
+  resize();                        // chamada inicial, ao carregar a página
+  requestAnimationFrame(drawFrame); // inicia o loop de animação
+
+  // ============================================================
+  // 4) LINHA "DE TERMINAL" DIGITADA NO HERO
+  // ============================================================
+
+  const typedEl = document.getElementById('typed');
+  // Textos da linha digitada, um para cada idioma
+  const typedLines = {
+    pt: '$ automatizando processos desde 2021',
+    en: '$ automating processes since 2021'
+  };
+  let currentLang = 'pt';   // idioma atual da página (começa em português)
+
+  // Escreve o texto letra por letra, simulando alguém digitando
+  function typeLine(text){
+    if(!typedEl){ return; }   // proteção: se o elemento não existir, não faz nada
+    if(reducedMotion){
+      // Sem animação: mostra o texto inteiro de uma vez
+      typedEl.textContent = text;
+      return;
+    }
+    let i = 0;
+    typedEl.textContent = '';
+    // Função recursiva que vai adicionando uma letra a cada 45 milissegundos
+    (function typeChar(){
+      if(i <= text.length){
+        typedEl.textContent = text.slice(0, i);
+        i++;
+        setTimeout(typeChar, 45);
+      }
+    })();
+  }
+  typeLine(typedLines.pt);   // ao carregar a página, digita a frase em português
+
+  // ============================================================
+  // 5) BOTÃO DE TROCA DE IDIOMA (PT / EN)
+  // ============================================================
+
+  const langToggle = document.getElementById('langToggle');
+  // Só configura o botão de idioma se ele realmente existir na página
+  if(langToggle){
+    const toggleSpans = langToggle.querySelectorAll('span');   // os dois <span> "PT" e "EN"
+
+    // Aplica o idioma escolhido em toda a página
+    function applyLang(lang){
+      currentLang = lang;
+      // Atualiza o atributo lang do <html>, importante para acessibilidade e SEO
+      document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
+      // Atualiza o título da aba do navegador
+      document.title = lang === 'pt'
+        ? 'Caio Rangel — Desenvolvedor Backend & Automação'
+        : 'Caio Rangel — Backend Developer & Automation';
+
+      // Troca o texto simples de todos os elementos que têm data-pt e data-en
+      document.querySelectorAll('[data-pt][data-en]').forEach(el => {
+        el.textContent = el.getAttribute('data-' + lang);
+      });
+      // Troca o HTML interno dos elementos que têm data-pt-html e data-en-html
+      // (usado quando o texto tem tags dentro, como <strong> e <br>)
+      document.querySelectorAll('[data-pt-html][data-en-html]').forEach(el => {
+        el.innerHTML = el.getAttribute('data-' + lang + '-html');
+      });
+
+      // Reinicia a animação de digitação com a frase no novo idioma
+      typeLine(typedLines[lang]);
+
+      // Destaca visualmente qual opção (PT ou EN) está ativa no botão
+      toggleSpans.forEach(s => s.classList.toggle('active', s.dataset.lang === lang));
+    }
+
+    // Ao clicar no botão, alterna entre "pt" e "en"
+    langToggle.addEventListener('click', () => {
+      applyLang(currentLang === 'pt' ? 'en' : 'pt');
+    });
+  }
+
+  // ============================================================
+  // 6) ANIMAÇÃO "APARECER AO ROLAR" (scroll reveal)
+  // ============================================================
+
+  // Pega todos os elementos marcados com a classe .reveal
+  const revealEls = document.querySelectorAll('.reveal');
+
+  // IntersectionObserver é uma API do navegador que avisa quando um
+  // elemento entra ou sai da área visível da tela — muito mais
+  // eficiente do que ficar checando a posição de scroll manualmente
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){       // elemento entrou na tela
+        entry.target.classList.add('visible');  // ativa o CSS de fade-in
+        observer.unobserve(entry.target);        // já apareceu, não precisa checar de novo
+      }
+    });
+  }, { threshold: 0.15 });   // dispara quando 15% do elemento já está visível
+
+  revealEls.forEach(el => observer.observe(el));  // começa a "vigiar" cada elemento
+
+  // ============================================================
+  // 7) EFEITOS NOS BOTÕES: BRILHO QUE SEGUE O MOUSE + ONDA AO CLICAR
+  // ============================================================
+
+  document.querySelectorAll('.btn').forEach(btn => {
+    // A cada movimento do mouse sobre o botão, atualiza duas variáveis
+    // CSS (--mx e --my) com a posição do cursor DENTRO do botão.
+    // O CSS usa essas variáveis no gradiente radial (.btn::before)
+    // para o brilho seguir exatamente onde está o mouse.
+    btn.addEventListener('mousemove', (e) => {
+      const rect = btn.getBoundingClientRect();          // posição/tamanho do botão na tela
+      btn.style.setProperty('--mx', `${e.clientX - rect.left}px`);
+      btn.style.setProperty('--my', `${e.clientY - rect.top}px`);
+    });
+
+    // A cada clique, cria um elemento <span class="ripple"> na posição
+    // exata do clique, que se expande e desaparece (efeito "onda")
+    btn.addEventListener('click', function(e){
+      const rect = btn.getBoundingClientRect();
+      const ripple = document.createElement('span');
+      ripple.className = 'ripple';
+      const size = Math.max(rect.width, rect.height);   // tamanho grande o suficiente para cobrir o botão
+      ripple.style.width = ripple.style.height = size + 'px';
+      ripple.style.left = (e.clientX - rect.left - size/2) + 'px';
+      ripple.style.top = (e.clientY - rect.top - size/2) + 'px';
+      btn.appendChild(ripple);
+      // Remove o elemento depois que a animação CSS (0.6s) já terminou,
+      // para não acumular dezenas de <span> escondidos no botão
+      setTimeout(() => ripple.remove(), 650);
+    });
+  });
+
+  // ============================================================
+  // 8) DESTACAR O LINK DO MENU CONFORME A SEÇÃO VISÍVEL
+  // ============================================================
+
+  const sections = document.querySelectorAll('section[id]');   // todas as seções com id (sobre, projetos...)
+  const navLinks = document.querySelectorAll('.nav-links a');  // os links correspondentes no menu
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+    // Descobre qual é a última seção cujo topo já passou da posição de rolagem atual
+    sections.forEach(sec => {
+      const top = sec.offsetTop - 120;   // -120 dá uma margem para trocar um pouco antes de chegar exatamente na seção
+      if(window.scrollY >= top) current = sec.getAttribute('id');
+    });
+    // Colore de branco o link do menu que corresponde à seção atual; os outros voltam à cor padrão do CSS
+    navLinks.forEach(link => {
+      link.style.color = link.getAttribute('href') === '#' + current ? 'var(--text-primary)' : '';
+    });
+  });
+
+})();
+// Fim da função autoexecutável — nenhuma dessas variáveis/funções
+// existe fora deste bloco, mantendo o escopo global do navegador limpo.
+</script>
+
+</body>
+</html>
