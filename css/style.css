@@ -34,6 +34,13 @@
     overflow-x: hidden;        /* impede rolagem horizontal indesejada */
   }
 
+  @media (pointer: fine){
+    html, body,
+    a, button, .btn, .nav-toggle, .lang-toggle, .project-orb, .skill-chip, .nav-links a{
+      cursor: url('../images/mira.svg') 16 16, crosshair;
+    }
+  }
+
   /* ======================================================
      FUNDO ANIMADO (canvas de estrelas)
      O <canvas id="starfield"> é desenhado via JavaScript.
@@ -83,6 +90,34 @@
     width: 100%;
     height: auto;
     display: block;
+  }
+  .tie-fighter.destroyed{
+    animation: none !important;
+    opacity: 0 !important;
+  }
+  .tie-fighter.exploding img{
+    animation: tie-explode .42s ease-out forwards;
+  }
+  @keyframes tie-explode{
+    0%{ transform: scale(1) rotate(0deg); opacity: 1; filter: brightness(2); }
+    35%{ transform: scale(1.7) rotate(28deg); opacity: 1; filter: brightness(4) drop-shadow(0 0 18px #ff2d2d); }
+    100%{ transform: scale(0.05) rotate(90deg); opacity: 0; filter: brightness(8); }
+  }
+  .tie-burst{
+    position: fixed;
+    width: 56px;
+    height: 56px;
+    margin: -28px 0 0 -28px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 6;
+    background: radial-gradient(circle, #fff 0%, #ff2d2d 38%, transparent 70%);
+    box-shadow: 0 0 18px 6px rgba(255,45,45,0.55);
+    animation: tie-burst .4s ease-out forwards;
+  }
+  @keyframes tie-burst{
+    0%{ transform: scale(0.2); opacity: 1; }
+    100%{ transform: scale(2.2); opacity: 0; }
   }
   .tie-1{ top: 16%; left: -70px; width: 38px; animation: tie-ltr 22s linear infinite; }
   .tie-2{ top: 42%; left: -70px; width: 28px; animation: tie-ltr 18s linear infinite 6s; opacity: 0.75; }
@@ -473,27 +508,56 @@
   }
   .about-text strong{ color: var(--text-primary); font-weight: 600; } /* destaca palavras-chave dentro do texto */
 
-  /* HABILIDADES */
   .skills-grid{
-    display:flex;
-    flex-wrap:wrap;   /* as "pílulas" de habilidade quebram linha automaticamente */
-    gap: 12px;
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+    gap: 16px;
   }
   .skill-chip{
-    font-family: var(--font-mono);   /* fonte "de código", combina com o tema técnico */
-    font-size: 13.5px;
-    padding: 10px 16px;
-    border: 1px solid var(--line);
-    border-radius: 999px;             /* formato de pílula */
-    background: var(--bg-panel);
-    color: var(--text-primary);
-    transition: border-color .25s ease, transform .25s ease, box-shadow .25s ease;
+    position: relative;
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 124px;
+    padding: 14px 10px 18px;
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 500;
+    color: #f3d4d4;
+    background: #1a1012;
+    border: none;
+    border-radius: 22px 10px 10px 10px;
+    line-height: 1.2;
+    text-align: center;
+    transition: transform .25s ease, box-shadow .25s ease;
+  }
+  .skill-chip::after{
+    content:'';
+    position:absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 0;
+    height: 3px;
+    background: var(--accent);
+    border-radius: 3px 3px 0 0;
+  }
+  .skill-name{
+    width: 100%;
+    color: #f0d6d6;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .skill-chip svg{
+    width: 36px;
+    height: 36px;
+    margin: 12px 0 6px;
+    color: var(--accent);
+    fill: currentColor;
   }
   .skill-chip:hover{
-    border-color: var(--accent);
-    transform: translateY(-3px);     /* efeito de "levantar" a pílula no hover */
-    box-shadow: 0 6px 18px -6px rgba(255,45,45,0.4);
-    color: var(--accent);
+    transform: translateY(-4px);
+    box-shadow: 0 10px 22px -12px rgba(255,45,45,0.55);
   }
 
   /* EXPERIÊNCIA (linha do tempo vertical) */
@@ -542,33 +606,97 @@
     max-width: 560px;
   }
 
-  /* CURRÍCULO (card de download/visualização do PDF) */
+  /* Painel holocron / terminal imperial */
+  .holo-panel{
+    position: relative;
+    background:
+      linear-gradient(180deg, rgba(255,45,45,0.06), transparent 28%),
+      repeating-linear-gradient(0deg, rgba(255,45,45,0.04) 0 1px, transparent 1px 4px),
+      linear-gradient(160deg, #12080a, #0a0608 55%, #14090b);
+    border: 1px solid rgba(255,45,45,0.38);
+    border-radius: 4px;
+    padding: 28px 32px 30px;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 1px rgba(255,45,45,0.08) inset,
+      0 18px 40px -18px rgba(255,45,45,0.35);
+  }
+  .holo-corner{
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    pointer-events: none;
+  }
+  .holo-corner.tl{ top: 6px; left: 6px; border-top: 2px solid var(--accent); border-left: 2px solid var(--accent); }
+  .holo-corner.tr{ top: 6px; right: 6px; border-top: 2px solid var(--accent); border-right: 2px solid var(--accent); }
+  .holo-corner.bl{ bottom: 6px; left: 6px; border-bottom: 2px solid var(--accent); border-left: 2px solid var(--accent); }
+  .holo-corner.br{ bottom: 6px; right: 6px; border-bottom: 2px solid var(--accent); border-right: 2px solid var(--accent); }
+  .holo-scan{
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(180deg, transparent 0%, rgba(255,45,45,0.14) 48%, transparent 100%);
+    background-size: 100% 42%;
+    animation: holo-scan 4.8s linear infinite;
+    opacity: 0.55;
+  }
+  @keyframes holo-scan{
+    0%{ background-position: 0 -40%; }
+    100%{ background-position: 0 140%; }
+  }
+  .holo-header{
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed rgba(255,45,45,0.35);
+  }
+  .holo-tag{
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+  }
+  .holo-status{
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: #f3d4d4;
+    padding: 3px 10px;
+    border: 1px solid rgba(255,45,45,0.45);
+    background: rgba(255,45,45,0.12);
+  }
+  .holo-status.pulse{
+    animation: holo-pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes holo-pulse{
+    0%, 100%{ box-shadow: 0 0 0 0 rgba(255,45,45,0.0); }
+    50%{ box-shadow: 0 0 10px 2px rgba(255,45,45,0.35); }
+  }
+
   .resume-card{
+    display:block;
+  }
+  .resume-body{
     display:flex;
     align-items:center;
     justify-content:space-between;
     gap: 24px;
-    flex-wrap: wrap;    /* em telas estreitas, os botões descem para uma nova linha */
-    background: linear-gradient(160deg, var(--bg-panel), var(--bg-panel-2));
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: 32px 36px;
-    transition: border-color .3s ease, box-shadow .3s ease;
-  }
-  .resume-card:hover{
-    border-color: var(--accent);
-    box-shadow: 0 12px 30px -12px rgba(255,45,45,0.3);
+    flex-wrap: wrap;
   }
   .resume-icon{
     width: 52px;
     height: 52px;
-    flex-shrink: 0;    /* impede que o ícone encolha se faltar espaço */
-    border-radius: 10px;
-    background: var(--accent-dim);
+    flex-shrink: 0;
+    border: 1px solid rgba(255,45,45,0.4);
+    background: rgba(255,45,45,0.08);
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size: 24px;
+    color: var(--accent);
   }
   .resume-info{
     flex: 1;
@@ -582,10 +710,12 @@
     font-weight: 600;
     font-size: 1.1rem;
     margin-bottom: 4px;
+    letter-spacing: 0.04em;
   }
   .resume-text-sub{
     color: var(--text-muted);
     font-size: 0.92rem;
+    font-family: var(--font-mono);
   }
   .resume-actions{
     display:flex;
@@ -764,17 +894,16 @@
 
   /* CONTATO */
   .contact-box{
-    background: var(--bg-panel);
-    border: 1px solid var(--line);
-    border-radius: 16px;
-    padding: 48px;
     text-align:center;
+    padding: 36px 40px 42px;
   }
   .contact-title{
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    font-size: clamp(1.4rem, 4vw, 2rem);
     margin-bottom: 14px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
   }
   .contact-sub{
     color: var(--text-muted);

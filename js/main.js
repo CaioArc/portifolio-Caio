@@ -306,6 +306,46 @@
   // 7) EFEITOS NOS BOTÕES: BRILHO QUE SEGUE O MOUSE + ONDA AO CLICAR
   // ============================================================
 
+  function playBlaster(){
+    const shot = new Audio('sounds/blaster.m4a');
+    shot.volume = 0.75;
+    shot.play().catch(() => {});
+  }
+
+  function destroyTie(tie){
+    if(tie.classList.contains('destroyed')) return;
+    const rect = tie.getBoundingClientRect();
+    const burst = document.createElement('div');
+    burst.className = 'tie-burst';
+    burst.style.left = (rect.left + rect.width / 2) + 'px';
+    burst.style.top = (rect.top + rect.height / 2) + 'px';
+    document.body.appendChild(burst);
+    tie.classList.add('exploding', 'destroyed');
+    setTimeout(() => burst.remove(), 450);
+    setTimeout(() => {
+      tie.classList.remove('exploding', 'destroyed');
+      tie.style.animation = 'none';
+      void tie.offsetWidth;
+      tie.style.animation = '';
+    }, 3500);
+  }
+
+  document.addEventListener('click', (e) => {
+    playBlaster();
+    const pad = 22;
+    document.querySelectorAll('.tie-fighter:not(.destroyed)').forEach(tie => {
+      const r = tie.getBoundingClientRect();
+      if(
+        e.clientX >= r.left - pad &&
+        e.clientX <= r.right + pad &&
+        e.clientY >= r.top - pad &&
+        e.clientY <= r.bottom + pad
+      ){
+        destroyTie(tie);
+      }
+    });
+  });
+
   document.querySelectorAll('.btn').forEach(btn => {
     // A cada movimento do mouse sobre o botão, atualiza duas variáveis
     // CSS (--mx e --my) com a posição do cursor DENTRO do botão.

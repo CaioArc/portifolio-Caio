@@ -37,7 +37,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- Importa as 3 fontes usadas no site: Space Grotesk (títulos), Inter (texto) e JetBrains Mono (trechos "de código") -->
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=holo-panels">
 
 </head>
 <body>
@@ -145,17 +145,14 @@
       O JS troca o innerHTML inteiro nesse caso, e não só o texto simples.
     -->
     <p class="about-text reveal" id="aboutText"
-      data-pt-html='Sou <strong>desenvolvedor back-end</strong> com foco em <strong>automação de processos</strong>, atuando na construção de APIs, integrações entre sistemas e scripts que eliminam tarefas repetitivas. Gosto de resolver problemas na raiz: entender o processo manual, mapear onde ele trava e transformar isso em algo confiável e automático.<br><br><em style="color:var(--text-muted); font-style:normal; opacity:0.85;">(Espaço reservado — me conte mais sobre sua trajetória, formação e o que te motiva como desenvolvedor, e eu ajusto esse texto.)</em>'
-      data-en-html='I am a <strong>back-end developer</strong> focused on <strong>process automation</strong>, building APIs, system integrations and scripts that eliminate repetitive tasks. I like solving problems at the root: understanding the manual process, finding where it breaks down, and turning it into something reliable and automatic.<br><br><em style="color:var(--text-muted); font-style:normal; opacity:0.85;">(Placeholder — tell me more about your background, education and what motivates you as a developer, and I will adjust this text.)</em>'>
+      data-pt-html='Sou <strong>desenvolvedor back-end</strong> com foco em <strong>automação de processos</strong>, atuando na construção de APIs, integrações entre sistemas e scripts que eliminam tarefas repetitivas. Gosto de resolver problemas na raiz: entender o processo manual, mapear onde ele trava e transformar isso em algo confiável e automático.<br><br>Minha trajetória na área de tecnologia é marcada pela formação em Ciência da Computação, pelo interesse em desenvolvimento de software e pela busca constante por soluções que unam eficiência, automação e inovação.'
+      data-en-html='I am a <strong>back-end developer</strong> focused on <strong>process automation</strong>, building APIs, system integrations and scripts that eliminate repetitive tasks. I like solving problems at the root: understanding the manual process, finding where it breaks down, and turning it into something reliable and automatic.<br><br>My path in technology is marked by a Computer Science degree, a passion for software development, and a constant search for solutions that combine efficiency, automation and innovation.'>
       Sou <strong>desenvolvedor back-end</strong> com foco em <strong>automação de processos</strong>,
       atuando na construção de APIs, integrações entre sistemas e scripts que eliminam
       tarefas repetitivas. Gosto de resolver problemas na raiz: entender o processo manual,
       mapear onde ele trava e transformar isso em algo confiável e automático.
       <br><br>
-      <em style="color:var(--text-muted); font-style:normal; opacity:0.85;">
-      (Espaço reservado — me conte mais sobre sua trajetória, formação e o que te motiva
-      como desenvolvedor, e eu ajusto esse texto.)
-      </em>
+      Minha trajetória na área de tecnologia é marcada pela formação em Ciência da Computação, pelo interesse em desenvolvimento de software e pela busca constante por soluções que unam eficiência, automação e inovação.
     </p>
   </section>
 
@@ -165,27 +162,32 @@
   <section id="curriculo">
     <div class="section-label" data-pt="// currículo" data-en="// resume">// currículo</div>
     <h2 class="section-title reveal" data-pt="Currículo em PDF" data-en="Resume (PDF)">Currículo em PDF</h2>
-    <div class="resume-card reveal">
-      <div class="resume-info">
-        <div class="resume-icon">📄</div>
-        <div>
-          <div class="resume-text-title" data-pt="Currículo — Caio Rangel" data-en="Resume — Caio Rangel">Currículo — Caio Rangel</div>
-          <div class="resume-text-sub" data-pt="Baixe ou visualize meu currículo completo em PDF" data-en="Download or view my full resume in PDF">Baixe ou visualize meu currículo completo em PDF</div>
+    <div class="holo-panel resume-card reveal">
+      <span class="holo-corner tl"></span>
+      <span class="holo-corner tr"></span>
+      <span class="holo-corner bl"></span>
+      <span class="holo-corner br"></span>
+      <div class="holo-scan"></div>
+      <div class="holo-header">
+        <span class="holo-tag">FILE // 00-CR</span>
+        <span class="holo-status" data-pt="ACESSO AUTORIZADO" data-en="ACCESS GRANTED">ACESSO AUTORIZADO</span>
+      </div>
+      <div class="resume-body">
+        <div class="resume-info">
+          <div class="resume-icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48" width="42" height="42"><rect x="10" y="6" width="28" height="36" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" d="M16 16h16M16 22h16M16 28h10"/></svg>
+          </div>
+          <div>
+            <div class="resume-text-title" data-pt="Dossiê — Caio Rangel" data-en="Dossier — Caio Rangel">Dossiê — Caio Rangel</div>
+            <div class="resume-text-sub" data-pt="Registro imperial de competências · formato holograma PDF" data-en="Imperial skills record · hologram PDF format">Registro imperial de competências · formato holograma PDF</div>
+          </div>
+        </div>
+        <div class="resume-actions">
+          <a href="curriculo.html" class="btn primary" data-pt="Abrir dossiê" data-en="Open dossier">Abrir dossiê</a>
+          <a href="curriculo-caio-rangel.pdf" download="Curriculo-Caio-Rangel.pdf" class="btn" data-pt="Baixar PDF" data-en="Download PDF">Baixar PDF</a>
         </div>
       </div>
-      <div class="resume-actions">
-        <!-- O atributo "download" sugere ao navegador baixar o arquivo em vez de tentar abri-lo -->
-        <a href="curriculo-caio-rangel.pdf" download class="btn primary" data-pt="⬇ Baixar PDF" data-en="⬇ Download PDF">⬇ Baixar PDF</a>
-        <!-- target="_blank" abre em nova aba; rel="noopener noreferrer" é uma proteção de segurança
-             que impede a página aberta de manipular esta aba original -->
-        <a href="curriculo-caio-rangel.pdf" target="_blank" rel="noopener noreferrer" class="btn" data-pt="Visualizar" data-en="View">Visualizar</a>
-      </div>
     </div>
-    <p style="margin-top:16px; color:var(--text-muted); font-size:0.85rem; font-family: var(--font-mono);"
-      data-pt="* coloque o arquivo 'curriculo-caio-rangel.pdf' na mesma pasta do index.html para os botões funcionarem"
-      data-en="* place the file 'curriculo-caio-rangel.pdf' in the same folder as index.html for the buttons to work">
-      * coloque o arquivo 'curriculo-caio-rangel.pdf' na mesma pasta do index.html para os botões funcionarem
-    </p>
   </section>
 
   <!-- ======================================================
@@ -195,23 +197,47 @@
     <div class="section-label" data-pt="// habilidades" data-en="// skills">// habilidades</div>
     <h2 class="section-title reveal" data-pt="Stack &amp; Competências" data-en="Stack &amp; Skills">Stack &amp; Competências</h2>
     <div class="skills-grid reveal">
-      <!-- Nomes de tecnologias (Python, Docker etc.) não são traduzidos, por isso não têm data-pt/data-en -->
-      <span class="skill-chip">Python</span>
-      <span class="skill-chip">Node.js</span>
-      <span class="skill-chip">SQL / PostgreSQL</span>
-      <span class="skill-chip" data-pt="APIs REST" data-en="REST APIs">APIs REST</span>
-      <span class="skill-chip" data-pt="Automação de Processos (RPA)" data-en="Process Automation (RPA)">Automação de Processos (RPA)</span>
-      <span class="skill-chip">Docker</span>
-      <span class="skill-chip">Linux</span>
-      <span class="skill-chip">Git &amp; GitHub</span>
-      <span class="skill-chip" data-pt="Integração de Sistemas" data-en="System Integration">Integração de Sistemas</span>
-      <span class="skill-chip" data-pt="Testes Automatizados" data-en="Automated Testing">Testes Automatizados</span>
+      <span class="skill-chip">
+        <span class="skill-name">Python</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2C6.5 2 7 4.2 7 6.1V8h7v1H5.8C3.6 9 2 10.4 2 13.1c0 2.7 1.5 4.1 4 4.1H7v-2c0-2.1 1.8-4 4.1-4H17c1.7 0 3-1.4 3-3.1V6.1C20 4 18.6 2 12 2zm-2.1 1.7c.6 0 1.1.5 1.1 1.1S10.5 6 9.9 6s-1.1-.5-1.1-1.2.5-1.1 1.1-1.1z"/><path fill="currentColor" d="M12 22c5.5 0 5-2.2 5-4.1V16H10v-1h8.2c2.2 0 3.8-1.4 3.8-4.1 0-2.7-1.5-4.1-4-4.1H17v2c0 2.1-1.8 4-4.1 4H7c-1.7 0-3 1.4-3 3.1v2.8C4 20 5.4 22 12 22zm2.1-1.7c-.6 0-1.1-.5-1.1-1.1s.5-1.2 1.1-1.2 1.1.5 1.1 1.2-.5 1.1-1.1 1.1z"/></svg>
+      </span>
+      <span class="skill-chip">
+        <span class="skill-name">Node.js</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M11.6 1.1 2.3 6.4v10.7l9.3 5.4 9.3-5.4V6.4L11.6 1.1zm6.4 14.3-6.4 3.7-6.4-3.7V8.1l6.4-3.7 6.4 3.7v7.3z"/></svg>
+      </span>
+      <span class="skill-chip">
+        <span class="skill-name">n8n</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6.5" cy="12" r="3" fill="currentColor"/><circle cx="17.5" cy="6.5" r="3" fill="currentColor"/><circle cx="17.5" cy="17.5" r="3" fill="currentColor"/><path fill="none" stroke="currentColor" stroke-width="1.8" d="M9.2 11.2 14.8 7.8M9.2 12.8l5.6 4.4"/></svg>
+      </span>
+      <span class="skill-chip">
+        <span class="skill-name">SQL</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="6" rx="8" ry="3.2" fill="currentColor"/><path fill="currentColor" d="M4 6v6c0 1.8 3.6 3.2 8 3.2s8-1.4 8-3.2V6c0 1.8-3.6 3.2-8 3.2S4 7.8 4 6z"/><path fill="currentColor" d="M4 12v6c0 1.8 3.6 3.2 8 3.2s8-1.4 8-3.2v-6c0 1.8-3.6 3.2-8 3.2S4 13.8 4 12z"/></svg>
+      </span>
+      <span class="skill-chip">
+        <span class="skill-name">Docker</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4.2 11h2.1v2H4.2v-2zm2.7 0h2.1v2H6.9v-2zm2.6 0h2.2v2H9.5v-2zm-5.3-2.6h2.1v2.1H4.2V8.4zm2.7 0h2.1v2.1H6.9V8.4zm2.6 0h2.2v2.1H9.5V8.4zm2.7 0h2.1v2.1h-2.1V8.4zM4 15.3c2.2 1.7 5.4 2.2 8.7 1.6 2.7-.5 5.2-1.9 6.6-4.1.6.1 2.2.1 2.7-1.1.2-.5-.1-1.1-.3-1.4-.5 1.4-1.5 1.3-2.2 1.1C17.8 9.6 16 8.4 13.2 8.4h-.5v2.6H4v4.3z"/></svg>
+      </span>
+      <span class="skill-chip">
+        <span class="skill-name">HTML</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 3h16l-1.5 17L12 22l-6.5-2L4 3zm4.2 6.2h7.7l.2-2.2H7.8L7.5 5h9.2l-.7 7.4H9.3l.2 2.3 2.5.7 2.5-.7.2-1.7h2.2l-.3 3.3L12 18.2 8.1 17 7.6 12h2.2l.2 1.6 2 .5 2-.5.1-1.1H8.2V9.2z"/></svg>
+      </span>
+      <span class="skill-chip">
+        <span class="skill-name">CSS</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 3h16l-1.5 17L12 22l-6.5-2L4 3zm4.3 6h7.6l.2-2.2H7.8L7.5 5h9.2l-.8 8.5H9.4l.2 2.2 2.4.7 2.5-.7.1-1.5h2.2l-.3 3.1L12 18.3 8.1 17 7.6 12h2.3l.2 1.5h3.6l.1-1.1H8.3V9z"/></svg>
+      </span>
+      <span class="skill-chip">
+        <span class="skill-name">JavaScript</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 3h16v18H4V3zm9.2 13.4c0 2.1-1.3 3.1-3.2 3.1-1.7 0-2.8-.8-3.3-1.8l1.7-1c.3.6.7 1 1.5 1 .8 0 1.3-.3 1.3-1.5v-5.4h2v5.6zm1.5 3c-1.9 0-3.1-1-3.6-2.2l1.7-1c.3.7.9 1.3 1.8 1.3.8 0 1.3-.4 1.3-1s-.4-.8-1.6-1.2c-1.7-.5-2.8-1.3-2.8-2.9 0-1.7 1.3-2.9 3.3-2.9 1.5 0 2.6.5 3.3 1.9l-1.6 1c-.3-.6-.8-1-1.7-1-.6 0-1 .3-1 .8s.4.7 1.6 1.1c1.8.5 2.8 1.3 2.8 3 0 1.8-1.4 3-3.5 3z"/></svg>
+      </span>
+      <span class="skill-chip">
+        <span class="skill-name">Git</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="m21.2 11-8.2-8.2c-.8-.8-2-.8-2.8 0L8.4 4.6l2.2 2.2c.5-.2 1.1-.1 1.5.3.4.4.5 1 .3 1.5l2.1 2.1c.5-.2 1.1-.1 1.5.3.6.6.6 1.5 0 2.1-.6.6-1.5.6-2.1 0-.4-.4-.5-1-.3-1.5l-2-2v5.3c.4.2.7.5.9.9.6.6.6 1.5 0 2.1-.6.6-1.5.6-2.1 0-.6-.6-.6-1.5 0-2.1.2-.2.5-.4.8-.5V10c-.3-.1-.6-.3-.8-.5-.4-.4-.5-1-.3-1.4L7.6 5.8 2.8 10.6c-.8.8-.8 2 0 2.8l8.2 8.2c.8.8 2 .8 2.8 0l8.2-8.2c.8-.8.8-2 0-2.8z"/></svg>
+      </span>
+      <span class="skill-chip">
+        <span class="skill-name">GitHub</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2C6.5 2 2 6.6 2 12.2c0 4.5 2.9 8.3 6.9 9.6.5.1.7-.2.7-.5v-1.7c-2.8.6-3.4-1.4-3.4-1.4-.4-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.6 2.4 1.1 3 .9.1-.7.4-1.1.6-1.4-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.7 1a9.3 9.3 0 0 1 5 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.4 4.7-4.6 5 .4.3.7 1 .7 2v2.3c0 .3.2.6.7.5 4-1.3 6.9-5.1 6.9-9.6C22 6.6 17.5 2 12 2z"/></svg>
+      </span>
     </div>
-    <p style="margin-top:16px; color:var(--text-muted); font-size:0.85rem; font-family: var(--font-mono);"
-      data-pt="* lista de exemplo — me diga suas competências reais para eu substituir"
-      data-en="* example list — tell me your real skills so I can replace it">
-      * lista de exemplo — me diga suas competências reais para eu substituir
-    </p>
   </section>
 
   <!-- ======================================================
@@ -249,9 +275,9 @@
     <h2 class="section-title reveal" data-pt="Projetos em Destaque" data-en="Featured Projects">Projetos em Destaque</h2>
     <div class="projects-space reveal">
       <div class="project-float">
-        <div class="project-orb" tabindex="0" role="group" aria-label="Pequeno Aprendiz">
+        <a href="https://portalaprendiz.netlify.app/" target="_blank" rel="noopener noreferrer" class="project-orb" aria-label="Pequeno Aprendiz">
           <div class="project-orb-inner">
-            <img src="images/projeto-pequeno-aprendiz.png" alt="Tela de login do Pequeno Aprendiz">
+            <img src="images/projeto-pequeno-aprendiz.jpg?v=2" alt="Tela de login do Pequeno Aprendiz">
             <div class="project-info">
               <div class="project-title" data-pt="Pequeno Aprendiz" data-en="Pequeno Aprendiz">Pequeno Aprendiz</div>
               <div class="project-desc" data-pt="Portal do aluno com login, histórico, videoaulas, boletos e chat com tutores." data-en="Student portal with login, history, video lessons, invoices and tutor chat.">Portal do aluno com login, histórico, videoaulas, boletos e chat com tutores.</div>
@@ -259,9 +285,10 @@
                 <span class="project-tag">HTML</span>
                 <span class="project-tag">CSS</span>
               </div>
+              <div class="project-cta" data-pt="Abrir projeto →" data-en="Open project →">Abrir projeto →</div>
             </div>
           </div>
-        </div>
+        </a>
       </div>
       <div class="project-float">
         <a href="https://fluxoinvest.netlify.app/" target="_blank" rel="noopener noreferrer" class="project-orb" aria-label="Fluxo Invest">
@@ -304,16 +331,22 @@
        CONTATO
        ====================================================== -->
   <section id="contato">
-    <div class="contact-box reveal">
-      <div class="contact-title" data-pt="Vamos conversar?" data-en="Let's talk?">Vamos conversar?</div>
-      <p class="contact-sub" data-pt="Estou aberto a novas oportunidades em desenvolvimento back-end e automação. Envie um e-mail ou chame no WhatsApp." data-en="I'm open to new opportunities in back-end development and automation. Send an email or message me on WhatsApp.">
-        Estou aberto a novas oportunidades em desenvolvimento back-end e automação.
-        Envie um e-mail ou chame no WhatsApp.
+    <div class="holo-panel contact-box reveal">
+      <span class="holo-corner tl"></span>
+      <span class="holo-corner tr"></span>
+      <span class="holo-corner bl"></span>
+      <span class="holo-corner br"></span>
+      <div class="holo-scan"></div>
+      <div class="holo-header">
+        <span class="holo-tag">COMMS // OPEN CHANNEL</span>
+        <span class="holo-status pulse" data-pt="SINAL ATIVO" data-en="SIGNAL LIVE">SINAL ATIVO</span>
+      </div>
+      <div class="contact-title" data-pt="Transmita uma mensagem" data-en="Transmit a message">Transmita uma mensagem</div>
+      <p class="contact-sub" data-pt="Canal aberto para missões de back-end e automação. Envie um sinal por e-mail ou WhatsApp." data-en="Open channel for back-end and automation missions. Send a signal by email or WhatsApp.">
+        Canal aberto para missões de back-end e automação. Envie um sinal por e-mail ou WhatsApp.
       </p>
       <div class="contact-buttons">
-        <!-- mailto: abre o programa de e-mail padrão do visitante, já preenchido com seu endereço -->
-        <a href="mailto:caiomarangel@gmail.com" class="btn primary" data-pt="✉ E-mail" data-en="✉ Email">✉ E-mail</a>
-        <!-- wa.me: link oficial do WhatsApp que abre uma conversa direto com o número informado -->
+        <a href="mailto:caiomarangel@gmail.com" class="btn primary" data-pt="E-mail" data-en="Email">E-mail</a>
         <a href="https://wa.me/5521983206771" target="_blank" rel="noopener noreferrer" class="btn">WhatsApp</a>
         <a href="https://github.com/CaioArc" target="_blank" rel="noopener noreferrer" class="btn">GitHub</a>
       </div>
@@ -326,7 +359,7 @@
 
 </main>
 
-<script src="js/main.js"></script>
+<script src="js/main.js?v=tie-hunt"></script>
 
 </body>
 </html>

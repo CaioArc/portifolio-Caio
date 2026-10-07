@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>Currículo — Caio Marcos do Amaral Rangel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Exo+2:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=holo-panels">
+<style>
+  .cv-page{ max-width: 820px; margin: 0 auto; padding: 96px 20px 64px; position: relative; z-index: 1; }
+  .cv-back{ display:inline-flex; margin-bottom: 22px; }
+  .cv-name{ font-family: var(--font-display); font-size: clamp(1.6rem, 4vw, 2.2rem); letter-spacing: .04em; margin-bottom: 6px; }
+  .cv-role{ color: var(--accent); font-family: var(--font-mono); letter-spacing: .12em; text-transform: uppercase; font-size: 13px; margin-bottom: 18px; }
+  .cv-contacts{ color: var(--text-muted); font-size: .95rem; margin-bottom: 28px; }
+  .cv-contacts a{ color: var(--accent); text-decoration: none; }
+  .cv-sec{ margin: 22px 0 8px; font-family: var(--font-display); color: var(--accent); letter-spacing: .14em; text-transform: uppercase; font-size: 13px; border-bottom: 1px dashed rgba(255,45,45,.35); padding-bottom: 6px; }
+  .cv-page p, .cv-page li{ color: #ddd; }
+  .cv-page ul{ padding-left: 18px; margin: 8px 0 0; }
+  .cv-page li{ margin: 4px 0; }
+  .cv-actions{ display:flex; gap:12px; flex-wrap:wrap; margin-top: 28px; }
+</style>
+</head>
+<body>
+<canvas id="starfield"></canvas>
+<div class="cv-page">
+  <a href="index.html#curriculo" class="btn cv-back">← Voltar</a>
+  <div class="holo-panel">
+    <span class="holo-corner tl"></span>
+    <span class="holo-corner tr"></span>
+    <span class="holo-corner bl"></span>
+    <span class="holo-corner br"></span>
+    <div class="holo-scan"></div>
+    <div class="holo-header">
+      <span class="holo-tag">FILE // 00-CR</span>
+      <span class="holo-status">ACESSO AUTORIZADO</span>
+    </div>
+    <h1 class="cv-name">Caio Marcos do Amaral Rangel</h1>
+    <div class="cv-role">Desenvolvedor Back-end &amp; Automação</div>
+    <div class="cv-contacts">
+      (21) 98320-6771 ·
+      <a href="mailto:caiomarangel@gmail.com">caiomarangel@gmail.com</a><br>
+      <a href="https://www.linkedin.com/in/caio-marcos-0421a1234/" target="_blank" rel="noopener noreferrer">LinkedIn</a> ·
+      <a href="https://github.com/CaioArc" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </div>
+
+    <div class="cv-sec">Resumo</div>
+    <p>Profissional com experiência em desenvolvimento back-end, automação de processos e integração de sistemas. Trabalho com Python, Django e APIs REST, aplicando inteligência artificial para otimizar fluxos e escalar soluções digitais, com perfil analítico e foco em resultados.</p>
+
+    <div class="cv-sec">Formação acadêmica</div>
+    <p><strong>Ciência da Computação</strong> — Uninassau<br>Fev 2021 – Dez 2026</p>
+
+    <div class="cv-sec">Habilidades técnicas</div>
+    <ul>
+      <li>Python, Django, Java, JavaScript</li>
+      <li>APIs REST, SQL, PostgreSQL, Supabase</li>
+      <li>HTML, CSS, Tailwind, Git</li>
+      <li>Selenium, Pandas, LangChain</li>
+      <li>Automação, n8n, Docker</li>
+    </ul>
+
+    <div class="cv-sec">Cursos e certificações</div>
+    <ul>
+      <li>JavaScript Completo ES6 — Udemy</li>
+      <li>React com JavaScript — Udemy</li>
+      <li>Java Orientado a Objetos — Udemy</li>
+      <li>Banco de Dados — Uninassau</li>
+      <li>Python Completo — Udemy</li>
+    </ul>
+
+    <div class="cv-sec">Projetos</div>
+    <ul>
+      <li><a href="https://fluxoinvest.netlify.app/" target="_blank" rel="noopener noreferrer">Fluxo Invest</a></li>
+      <li><a href="https://portalaprendiz.netlify.app/" target="_blank" rel="noopener noreferrer">Pequeno Aprendiz</a></li>
+      <li>Atendimento Automatizado com IA para Clínicas</li>
+    </ul>
+
+    <div class="cv-actions">
+      <a class="btn primary" href="curriculo-caio-rangel.pdf" download>Baixar PDF</a>
+      <a class="btn" href="curriculo-caio-rangel.docx" download>Baixar DOCX</a>
+    </div>
+  </div>
+</div>
+<script src="js/main.js?v=tie-hunt"></script>
+</body>
+</html>
